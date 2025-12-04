@@ -1,33 +1,50 @@
 package MenuPrincipal;
 
 import GestionCursos.GestionCursos;
+
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * PanelAgregarCurso
  * -----------------
- * Panel para registrar un nuevo curso en el sistema.
- * Incluye validaciones de clave y nombre del curso.
+ * Panel gráfico para registrar un nuevo curso en el catálogo.
+ *
+ * Este panel contiene campos de texto para capturar:
+ * - Clave del curso
+ * - Nombre del curso
+ * - Capacidad máxima
+ *
+ * Al presionar el botón "Agregar", se invoca el método
+ * {@link GestionCursos#agregarCurso(String, String, int)}
+ * para insertar el curso en el catálogo.
+ *
+ * En caso de error (curso duplicado o datos inválidos), se muestra un mensaje
+ * en pantalla mediante {@link JOptionPane}.
  *
  * @author Roberto
  * @version 2.0
  */
-public class PanelAgregarCurso extends JPanel 
-{
+public class PanelAgregarCurso extends JPanel {
 
+    // Campos de entrada
     private JTextField txtClave, txtNombre, txtCapacidad;
     private JButton btnAgregar;
-    private GestionCursos gestion;
-    
+
+    // Referencia al sistema de gestión de cursos
+    private GestionCursos gestionCursos;
+
     /**
      * Constructor del panel de registro de cursos.
+     *
+     * @param gestionCursos Instancia de {@link GestionCursos} que gestiona
+     *                      la lógica de inserción y validación de cursos.
      */
-    public PanelAgregarCurso(GestionCursos gestionRecibida)
-    {
-        this.gestion = gestionRecibida;
+    public PanelAgregarCurso(GestionCursos gestionCursos) {
+        this.gestionCursos = gestionCursos;
         setLayout(new GridLayout(4, 2, 10, 10));
 
+        // Etiquetas y campos
         add(new JLabel("Clave del curso:"));
         txtClave = new JTextField();
         add(txtClave);
@@ -35,70 +52,35 @@ public class PanelAgregarCurso extends JPanel
         add(new JLabel("Nombre del curso:"));
         txtNombre = new JTextField();
         add(txtNombre);
-        
+
         add(new JLabel("Capacidad máxima:"));
         txtCapacidad = new JTextField();
         add(txtCapacidad);
 
-        btnAgregar = new JButton("Agregar curso");
+        // Botón de acción
+        btnAgregar = new JButton("Agregar");
         add(new JLabel()); // espacio vacío
         add(btnAgregar);
-        
-        btnAgregar.addActionListener(e -> accionGuardar());
-        
-    }
-    private void accionGuardar() 
-    {
-        // 1. Obtener datos 
-        String clave = txtClave.getText().trim();
-        String nombre = txtNombre.getText().trim();
-        String capacidadStr = txtCapacidad.getText().trim();
 
-        // 2. Validaciones de formulario
-        if (clave.isEmpty() || nombre.isEmpty() || capacidadStr.isEmpty()) 
-        {
-            JOptionPane.showMessageDialog(this, 
-                "Todos los campos son obligatorios.", 
-                "Faltan datos", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        // Acción del botón con integración a la lógica
+        btnAgregar.addActionListener(e -> {
+            try {
+                String clave = txtClave.getText();
+                String nombre = txtNombre.getText();
+                int capacidad = Integer.parseInt(txtCapacidad.getText());
 
-        // 3. Validar que capacidad sea número
-        int capacidad = 0;
-        try {
-            capacidad = Integer.parseInt(capacidadStr);
-            if (capacidad <= 0) {
-                JOptionPane.showMessageDialog(this, 
-                    "La capacidad debe ser mayor a 0.", 
-                    "Error de Capacidad", JOptionPane.WARNING_MESSAGE);
-                return;
+                boolean agregado = gestionCursos.agregarCurso(clave, nombre, capacidad);
+
+                if (agregado) {
+                    JOptionPane.showMessageDialog(this, " Curso agregado correctamente");
+                } else {
+                    JOptionPane.showMessageDialog(this, " Error: Ya existe un curso con esa clave");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, " Error: La capacidad debe ser un número entero");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, " Error inesperado: " + ex.getMessage());
             }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, 
-                "La capacidad debe ser un número entero válido.", 
-                "Error de Formato", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Si devuelve true es que se guardó, si es false es que ya existía.
-        boolean guardado = gestion.agregarCurso(clave, nombre, capacidad);
-
-        // 5. Retroalimentación al usuario
-        if (guardado) {
-            JOptionPane.showMessageDialog(this, 
-                "Curso agregado exitosamente:\n" + nombre + " (" + clave + ")", 
-                "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            limpiarCampos();
-        } else {
-            JOptionPane.showMessageDialog(this, 
-                "Error: Ya existe un curso con la clave '" + clave + "'.\nIntenta con otra clave.", 
-                "Duplicado", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void limpiarCampos() {
-        txtClave.setText("");
-        txtNombre.setText("");
-        txtCapacidad.setText("");
+        });
     }
 }
