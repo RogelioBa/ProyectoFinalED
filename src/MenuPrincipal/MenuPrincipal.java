@@ -1,5 +1,6 @@
 package MenuPrincipal;
 
+import GestionCursos.GestionCursos;
 import javax.swing.*;
 import java.awt.*;
 
@@ -17,13 +18,15 @@ public class MenuPrincipal extends JFrame {
 
     private JPanel panelCentral;
     private CardLayout cardLayout;
+    private GestionCursos gestionCursos;
 
     public MenuPrincipal() {
         setTitle("Sistema de Gestión de Estudiantes - Proyecto Final");
         setSize(900, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
+        
+        gestionCursos = new GestionCursos();
         // Menú superior
         JMenuBar menuBar = new JMenuBar();
 
@@ -90,7 +93,7 @@ public class MenuPrincipal extends JFrame {
         panelCentral.add(new PanelBuscarEstudiante(), "BuscarEstudiante");
         panelCentral.add(new PanelListarPorPromedio(), "ListarPorPromedio");
 
-        panelCentral.add(new PanelAgregarCurso(), "AgregarCurso");
+        panelCentral.add(new PanelAgregarCurso(gestionCursos), "AgregarCurso");
         panelCentral.add(new PanelEliminarCurso(), "EliminarCurso");
         panelCentral.add(new PanelListarCursos(), "ListarCursos");
 
