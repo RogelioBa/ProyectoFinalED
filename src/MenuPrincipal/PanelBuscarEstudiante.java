@@ -6,12 +6,11 @@ import java.awt.*;
 /**
  * PanelBuscarEstudiante
  * ---------------------
- * Este panel permite buscar un estudiante por matrícula en el sistema.
- * Muestra los datos completos del estudiante si existe, o un mensaje
- * de error si no se encuentra.
+ * Panel para buscar un estudiante por matrícula en el sistema.
+ * Incluye validación de matrícula antes de invocar el módulo de gestión.
  *
  * @author Roberto
- * @version 1.0
+ * @version 2.0
  */
 public class PanelBuscarEstudiante extends JPanel {
 
@@ -21,7 +20,6 @@ public class PanelBuscarEstudiante extends JPanel {
 
     /**
      * Constructor del panel de búsqueda de estudiantes.
-     * Inicializa los componentes gráficos y define la acción del botón.
      */
     public PanelBuscarEstudiante() {
         setLayout(new BorderLayout(10, 10));
@@ -40,9 +38,15 @@ public class PanelBuscarEstudiante extends JPanel {
         add(panelSuperior, BorderLayout.NORTH);
         add(new JScrollPane(resultado), BorderLayout.CENTER);
 
-        // Acción del botón
+        // Acción del botón con validación
         btnBuscar.addActionListener(e -> {
             String matricula = txtMatricula.getText();
+
+            if (!ValidadorEntradas.esMatriculaValida(matricula)) {
+                JOptionPane.showMessageDialog(this, "Matrícula inválida");
+                return;
+            }
+
             // Aquí se conectará con SistemaGestionEstudiantes
             resultado.setText("Resultado de búsqueda para matrícula: " + matricula);
         });

@@ -7,6 +7,11 @@ package Estudiante;
 import static Estudiante.Accion.TipoAccion.CALIFICACION_AGREGADA;
 import static Estudiante.Accion.TipoAccion.INSCRIPCION_CURSO;
 import static Estudiante.Accion.TipoAccion.REGISTRO_ESTUDIANTE;
+import Excepciones.MatriculaInvalidaException;
+import Excepciones.NombreInvalidoException;
+import Excepciones.correoInvalidoException;
+import Excepciones.direccionVaciaException;
+import Excepciones.telefonoInvalidoException;
 import java.util.EmptyStackException;
 import java.util.List;
 
@@ -21,7 +26,7 @@ public class SistemaGestionEstudiantes {
     private estudiantesABB bstEstudiantes; // BST ordenado por matrícula
     private Pila<Accion> pilaAcciones; // Pila para el historial de acciones
 
-    public SistemaGestionEstudiantes() {
+    public SistemaGestionEstudiantes() throws MatriculaInvalidaException, NombreInvalidoException, telefonoInvalidoException, correoInvalidoException, direccionVaciaException {
         this.bstEstudiantes = new estudiantesABB();
         this.pilaAcciones = new Pila<>();
         // Inicializar con algunos datos de ejemplo
@@ -38,7 +43,7 @@ public class SistemaGestionEstudiantes {
      * @param correo Correo electrónico.
      * @param dir Dirección postal.
      */
-    public void registrarEstudiante(String matricula, String nombre, String tel, String correo, String dir) {
+    public void registrarEstudiante(String matricula, String nombre, String tel, String correo, String dir) throws MatriculaInvalidaException, NombreInvalidoException, telefonoInvalidoException, correoInvalidoException, direccionVaciaException {
         if (matricula == null || matricula.trim().isEmpty()) {
             System.out.println("Error: La matrícula no puede estar vacía.");
             return;
@@ -185,7 +190,7 @@ public class SistemaGestionEstudiantes {
     /**
      * Inicializa algunos datos para la demostración.
      */
-    private void inicializarDatos() {
+    private void inicializarDatos() throws MatriculaInvalidaException, NombreInvalidoException, telefonoInvalidoException, correoInvalidoException, direccionVaciaException {
         registrarEstudiante("A001", "Ana Pérez", "1234567890", "ana@tec.mx", "Calle A #10");
         // No registrar la acción para la precarga, simular una acción ya ejecutada
         pilaAcciones.DesaserAccion();
