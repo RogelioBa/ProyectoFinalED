@@ -37,23 +37,18 @@ public class GestionCursos
     }
 
     /**
-     * Elimina un curso del catálogo.
+     * Elimina un curso.
      */
-    public boolean eliminarCurso(String clave) 
+    public void eliminarCurso(String clave) throws CursoNoEncontradoException 
     {
         boolean eliminado = catalogoCursos.eliminar(clave);
         
-        if (eliminado) 
+        if (!eliminado) 
         {
-            System.out.println("Curso " + clave + " eliminado.");
-        } 
-        else 
-        {
-            System.out.println("Error: No se encontro el curso " + clave);
+            throw new CursoNoEncontradoException(clave);
         }
-        return eliminado;
     }
-
+    
     /**
      * Busca un curso específico para ver sus detalles o inscribir alumnos.
      */
