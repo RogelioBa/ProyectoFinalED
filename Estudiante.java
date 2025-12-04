@@ -221,11 +221,11 @@ class Nodo {
 }
 
 
-class estudiantesAVL {
+class estudiantesABB {
 
     Nodo raiz;
 
-    public estudiantesAVL() {
+    public estudiantesABB() {
         raiz = null;
     }
 
@@ -254,13 +254,7 @@ class estudiantesAVL {
         return nodo;
     }
 
-    /**
-     * 2. Búsqueda de estudiante por matrícula. Complejidad temporal: O(log N)
-     * en el caso promedio, O(N) en el peor caso.
-     *
-     * @param matricula La matrícula a buscar.
-     * @return El objeto Estudiante si se encuentra, null si no.
-     */
+
     public Estudiante buscar(String matricula) {
         return buscarRecursivo(raiz, matricula);
     }
@@ -273,24 +267,20 @@ class estudiantesAVL {
         int comparacion = matricula.compareTo(nodo.estudiante.getMatricula());
 
         if (comparacion == 0) {
-            return nodo.estudiante; // Caso base: encontrado
+            return nodo.estudiante; 
         } else if (comparacion < 0) {
-            return buscarRecursivo(nodo.izquierda, matricula); // Buscar a la izquierda
+            return buscarRecursivo(nodo.izquierda, matricula); 
         } else {
-            return buscarRecursivo(nodo.derecha, matricula); // Buscar a la derecha
+            return buscarRecursivo(nodo.derecha, matricula); 
         }
     }
 
-    /**
-     * Obtiene una lista de todos los estudiantes para procesar promedios.
-     */
     public List<Estudiante> obtenerTodosLosEstudiantes() {
         List<Estudiante> estudiantes = new ArrayList<>();
         inOrden(raiz, estudiantes);
         return estudiantes;
     }
 
-    // Recorrido In-Orden para obtener todos los elementos (no ordenados por promedio)
     private void inOrden(Nodo nodo, List<Estudiante> lista) {
         if (nodo != null) {
             inOrden(nodo.izquierda, lista);
@@ -299,7 +289,6 @@ class estudiantesAVL {
         }
     }
 
-    // Método para eliminar un estudiante (necesario para la acción de deshacer un registro)
     public boolean eliminar(String matricula) {
         Estudiante encontrado = buscar(matricula);
         if (encontrado == null) {
@@ -321,7 +310,6 @@ class estudiantesAVL {
         } else if (comparacion > 0) {
             nodo.derecha = eliminarRecursivo(nodo.derecha, matricula);
         } else {
-            // Nodo encontrado. Casos:
             if (nodo.izquierda == null) {
                 return nodo.derecha;
             }
@@ -329,10 +317,8 @@ class estudiantesAVL {
                 return nodo.izquierda;
             }
 
-            // Nodo con dos hijos: obtiene el sucesor in-orden (el menor de la subrama derecha)
             nodo.estudiante = getValorMinimo(nodo.derecha);
 
-            // Eliminar el sucesor in-orden
             nodo.derecha = eliminarRecursivo(nodo.derecha, nodo.estudiante.getMatricula());
         }
         return nodo;
@@ -347,7 +333,7 @@ class estudiantesAVL {
         return valorMinimo;
     }
 }
-
+ifubqfnja
 // --- 5. AVL NODE y AVL para Estudiantes (Ordenado por Promedio) ---
 /**
  * Nodo del Árbol AVL. La clave es el promedio y el valor es la referencia al
@@ -528,11 +514,11 @@ class EstudianteAVL {
 public class SistemaGestionEstudiantes {
 
     // Estructuras de datos principales
-    private estudiantesAVL bstEstudiantes; // BST ordenado por matrícula
+    private estudiantesABB bstEstudiantes; // BST ordenado por matrícula
     private Pila<Accion> pilaAcciones; // Pila para el historial de acciones
 
     public SistemaGestionEstudiantes() {
-        this.bstEstudiantes = new estudiantesAVL();
+        this.bstEstudiantes = new estudiantesABB();
         this.pilaAcciones = new Pila<>();
         // Inicializar con algunos datos de ejemplo
         inicializarDatos();
