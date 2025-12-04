@@ -92,6 +92,31 @@ public class ListaDobleCircular<T>
 
         return false;
     }
+    
+    /**
+     * Devuelve un String con los elementos de la lista.
+     */
+    public String obtenerListado(int limite) 
+    {
+        if (estaVacia()) 
+        {
+            return "La lista de espera está vacía.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Nodo aux = inicio;
+        int contador = 0;
+
+        do 
+        {
+            sb.append(contador + 1).append(". ").append(aux.dato.toString()).append("\n");
+            aux = aux.siguiente;
+            contador++;
+        } 
+        while (aux != inicio && contador < limite);
+
+        return sb.toString();
+    }
 
     /**
      * Mostrar los N primeros de la espera.

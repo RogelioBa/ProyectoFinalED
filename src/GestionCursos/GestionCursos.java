@@ -101,4 +101,20 @@ public class GestionCursos
             curso.agregarAEspera(estudiante);
         }
     }
+    
+    /**
+     * Mostrar lista de espera de un curso.
+     */
+    public String obtenerListaEspera(String claveCurso) throws CursoNoEncontradoException {
+        Curso curso = catalogoCursos.recuperar(claveCurso);
+        
+        if (curso == null) 
+        {
+            throw new CursoNoEncontradoException(claveCurso);
+        }
+        
+        String listado = curso.getListaEspera().obtenerListado(20);
+        
+        return "--- LISTA DE ESPERA: " + curso.getNombre() + " ---\n" + listado;
+    }
 }
