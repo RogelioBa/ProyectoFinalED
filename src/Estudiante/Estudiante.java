@@ -1,4 +1,4 @@
-package org.dallanapinya.eddproyecto;
+package Estudiante;
 
 import Excepciones.MatriculaInvalidaException;
 import Excepciones.NombreInvalidoException;
@@ -207,13 +207,13 @@ class Pila<T> {
     }
 } 
 
-class Nodo {
+class NodoABB {
 
     Estudiante estudiante;
-    Nodo izquierda;
-    Nodo derecha;
+    NodoABB izquierda;
+    NodoABB derecha;
 
-    public Nodo(Estudiante estudiante) {
+    public NodoABB(Estudiante estudiante) {
         this.estudiante = estudiante;
         this.derecha = null;
         this.izquierda = null;
@@ -223,7 +223,7 @@ class Nodo {
 
 class estudiantesABB {
 
-    Nodo raiz;
+    NodoABB raiz;
 
     public estudiantesABB() {
         raiz = null;
@@ -237,9 +237,9 @@ class estudiantesABB {
         return true;
     }
 
-    private Nodo insertarRecursivo(Nodo nodo, Estudiante estudiante) {
+    private NodoABB insertarRecursivo(NodoABB nodo, Estudiante estudiante) {
         if (nodo == null) {
-            return new Nodo(estudiante);
+            return new NodoABB(estudiante);
         }
 
         int comparacion = estudiante.getMatricula().compareTo(nodo.estudiante.getMatricula());
@@ -259,7 +259,7 @@ class estudiantesABB {
         return buscarRecursivo(raiz, matricula);
     }
 
-    private Estudiante buscarRecursivo(Nodo nodo, String matricula) {
+    private Estudiante buscarRecursivo(NodoABB nodo, String matricula) {
         if (nodo == null) {
             return null; 
         }
@@ -281,7 +281,7 @@ class estudiantesABB {
         return estudiantes;
     }
 
-    private void inOrden(Nodo nodo, List<Estudiante> lista) {
+    private void inOrden(NodoABB nodo, List<Estudiante> lista) {
         if (nodo != null) {
             inOrden(nodo.izquierda, lista);
             lista.add(nodo.estudiante);
@@ -298,7 +298,7 @@ class estudiantesABB {
         return true;
     }
 
-    private Nodo eliminarRecursivo(Nodo nodo, String matricula) {
+    private NodoABB eliminarRecursivo(NodoABB nodo, String matricula) {
         if (nodo == null) {
             return nodo;
         }
@@ -324,7 +324,7 @@ class estudiantesABB {
         return nodo;
     }
 
-    private Estudiante getValorMinimo(Nodo nodo) {
+    private Estudiante getValorMinimo(NodoABB nodo) {
         Estudiante valorMinimo = nodo.estudiante;
         while (nodo.izquierda != null) {
             valorMinimo = nodo.izquierda.estudiante;
@@ -333,11 +333,16 @@ class estudiantesABB {
         return valorMinimo;
     }
 }
-ifubqfnja
+
 // --- 5. AVL NODE y AVL para Estudiantes (Ordenado por Promedio) ---
 /**
  * Nodo del Árbol AVL. La clave es el promedio y el valor es la referencia al
  * estudiante.
+ */
+
+/**
+ * Nodo del Árbol AVL.La clave es el promedio y el valor es la referencia al
+ estudiante.
  */
 class AVLNode {
 
@@ -510,263 +515,5 @@ class EstudianteAVL {
     }
 }
 
-// --- 6. SISTEMA DE GESTIÓN DE ESTUDIANTES (MAIN) ---
-public class SistemaGestionEstudiantes {
-
-    // Estructuras de datos principales
-    private estudiantesABB bstEstudiantes; // BST ordenado por matrícula
-    private Pila<Accion> pilaAcciones; // Pila para el historial de acciones
-
-    public SistemaGestionEstudiantes() {
-        this.bstEstudiantes = new estudiantesABB();
-        this.pilaAcciones = new Pila<>();
-        // Inicializar con algunos datos de ejemplo
-        inicializarDatos();
-    }
-
-    // --- LÓGICA DE GESTIÓN (Funcionalidades solicitadas) ---
-    /**
-     * 1.1. Registro de estudiantes Realiza la validación e inserción en el BST.
-     *
-     * @param matricula Matrícula del estudiante.
-     * @param nombre Nombre completo.
-     * @param tel Teléfono.
-     * @param correo Correo electrónico.
-     * @param dir Dirección postal.
-     */
-    public void registrarEstudiante(String matricula, String nombre, String tel, String correo, String dir) {
-        if (matricula == null || matricula.trim().isEmpty()) {
-            System.out.println("Error: La matrícula no puede estar vacía.");
-            return;
-        }
-
-        // Validación de datos simple (ej. el teléfono es numérico)
-        if (!tel.matches("\\d+")) {
-            System.out.println("Error: El teléfono debe contener solo dígitos.");
-            return;
-        }
-
-        Estudiante nuevo = new Estudiante(matricula, nombre, tel, correo, dir);
-
-        if (bstEstudiantes.insertar(nuevo)) {
-            // Registrar la acción en la Pila
-            Accion accion = new Accion(Accion.TipoAccion.REGISTRO_ESTUDIANTE,
-                    "Registro de " + nombre,
-                    matricula);
-            pilaAcciones.agregarAccion(accion);
-            System.out.println("¡Estudiante registrado con éxito y acción registrada para Deshacer!");
-        } else {
-            System.out.println("Error: Ya existe un estudiante con la matrícula " + matricula + ".");
-        }
-    }
-
-    /**
-     * 1.2. Búsqueda de estudiante por matrícula.
-     *
-     * @param matricula La matrícula a buscar.
-     */
-    public void buscarEstudiante(String matricula) {
-        Estudiante encontrado = bstEstudiantes.buscar(matricula);
-
-        if (encontrado != null) {
-            System.out.println("\n--- Estudiante Encontrado ---");
-            System.out.println(encontrado.toString());
-            System.out.println("-----------------------------");
-        } else {
-            System.out.println("Estudiante con matrícula '" + matricula + "' no encontrado.");
-        }
-    }
-
-    /**
-     * 6.1. Listado de estudiantes ordenados por promedio (Usando AVL). *
-     * Proceso: 1. Obtener todos los estudiantes del BST. 2. Recalcular
-     * recursivamente el promedio de cada uno. 3. Insertar (Promedio,
-     * Estudiante) en un nuevo AVL. 4. Recorrer el AVL In-Orden.
-     */
-    public void listarEstudiantesOrdenadosPorPromedio() {
-        List<Estudiante> todos = bstEstudiantes.obtenerTodosLosEstudiantes();
-
-        if (todos.isEmpty()) {
-            System.out.println("No hay estudiantes registrados para generar el reporte.");
-            return;
-        }
-
-        EstudianteAVL avlPromedios = new EstudianteAVL();
-
-        for (Estudiante e : todos) {
-            // 2. Cálculo del promedio recursivo
-            double promedio = e.calcularPromedioRecursivo();
-
-            // 3. Inserción en el AVL
-            avlPromedios.insertar(promedio, e);
-        }
-
-        // 4. Recorrido In-Orden del AVL (Imprime el resultado)
-        avlPromedios.inOrdenRecorrido();
-    }
-
-    /**
-     * Simulación: 4.2. Procesar solicitud de calificación (agregando una
-     * calificación). * Nota: En un sistema real, esta lógica vendría después
-     * del Dequeue de una Cola de Solicitudes. Aquí simulamos la actualización
-     * directa y registramos la acción.
-     *
-     * * @param matricula Matrícula del estudiante.
-     * @param nuevaCalificacion Calificación a añadir.
-     */
-    public void agregarCalificacion(String matricula, double nuevaCalificacion) {
-        Estudiante e = bstEstudiantes.buscar(matricula);
-
-        if (e == null) {
-            System.out.println("Error: Estudiante no encontrado para aplicar la calificación.");
-            return;
-        }
-
-        // 2. Actualiza el arreglo de calificaciones
-        e.agregarCalificacion(nuevaCalificacion);
-        System.out.printf("Calificación (%.2f) agregada al estudiante %s.\n", nuevaCalificacion, e.getNombreCompleto());
-
-        // 3. Registra la operación en la Pila de acciones
-        // Los 'datosPrevios' son el tamaño actual del arreglo, que es el índice a eliminar para deshacer.
-        int indiceEliminar = e.getCalificaciones().size() - 1;
-        Accion accion = new Accion(Accion.TipoAccion.CALIFICACION_AGREGADA,
-                String.format("Calificación %.2f para %s", nuevaCalificacion, matricula),
-                new Object[]{matricula, indiceEliminar});
-        pilaAcciones.agregarAccion(accion);
-    }
-
-    /**
-     * 5.1. Deshacer última acción. Hace POP de la pila y revierte la operación.
-     */
-    public void deshacerUltimaAccion() {
-        try {
-            Accion ultimaAccion = pilaAcciones.DesaserAccion();
-            System.out.println("\n--- DESHACIENDO ACCIÓN: " + ultimaAccion.tipo + " ---");
-
-            switch (ultimaAccion.tipo) {
-                case REGISTRO_ESTUDIANTE:
-                    String matriculaARevertir = (String) ultimaAccion.datosPrevios;
-                    if (bstEstudiantes.eliminar(matriculaARevertir)) {
-                        System.out.println("✔ Deshecho: Se eliminó el registro del estudiante con matrícula " + matriculaARevertir + ".");
-                    } else {
-                        System.out.println("⚠ Advertencia: El estudiante ya había sido eliminado manualmente.");
-                    }
-                    break;
-                case CALIFICACION_AGREGADA:
-                    Object[] datos = (Object[]) ultimaAccion.datosPrevios;
-                    String mat = (String) datos[0];
-                    int indice = (int) datos[1];
-
-                    Estudiante e = bstEstudiantes.buscar(mat);
-                    if (e != null && indice < e.getCalificaciones().size()) {
-                        // Al deshacer, simplemente eliminamos la última calificación agregada (por índice)
-                        e.getCalificaciones().remove(indice);
-                        System.out.printf("✔ Deshecho: Se eliminó la última calificación del estudiante %s.\n", mat);
-                    } else {
-                        System.out.println("⚠ Advertencia: No se pudo deshacer la calificación (estudiante no encontrado o índice inválido).");
-                    }
-                    break;
-                case INSCRIPCION_CURSO:
-                    // Lógica para deshacer inscripción (requiere la implementación del Catálogo/Listas Enlazadas)
-                    System.out.println("Deshacer inscripción no implementado en este módulo (requiere módulo de Cursos).");
-                    break;
-            }
-        } catch (EmptyStackException e) {
-            System.out.println("La Pila de acciones está vacía. No hay nada que deshacer.");
-        } catch (Exception e) {
-            System.err.println("Error al intentar deshacer la acción: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Inicializa algunos datos para la demostración.
-     */
-    private void inicializarDatos() {
-        registrarEstudiante("A001", "Ana Pérez", "1234567890", "ana@tec.mx", "Calle A #10");
-        // No registrar la acción para la precarga, simular una acción ya ejecutada
-        pilaAcciones.DesaserAccion();
-        registrarEstudiante("C003", "Carlos Gómez", "9876543210", "carlos@tec.mx", "Calle C #30");
-        pilaAcciones.DesaserAccion();
-        registrarEstudiante("B002", "Beto Ramírez", "5551234567", "beto@tec.mx", "Calle B #20");
-        pilaAcciones.DesaserAccion();
-
-        // Agregar calificaciones (con registro de acción)
-        agregarCalificacion("A001", 9.5);
-        agregarCalificacion("A001", 8.0);
-        agregarCalificacion("B002", 7.0);
-        agregarCalificacion("C003", 10.0);
-        agregarCalificacion("C003", 8.5);
-    }
-
-    // --- DEMOSTRACIÓN DEL SISTEMA ---
-    public static void main(String[] args) {
-        SistemaGestionEstudiantes sistema = new SistemaGestionEstudiantes();
-        Scanner scanner = new Scanner(System.in);
-        int opcion;
-
-        do {
-            System.out.println("\n=======================================================");
-            System.out.println("          Módulo de Gestión de Estudiantes");
-            System.out.println("=======================================================");
-            System.out.println("1. Registrar nuevo estudiante");
-            System.out.println("2. Buscar estudiante por matrícula (BST)");
-            System.out.println("3. Listar estudiantes ordenados por promedio (AVL)");
-            System.out.println("4. Simular agregar calificación (para prueba de Pila)");
-            System.out.println("5. Deshacer última acción (Pila)");
-            System.out.println("7. Salir");
-            System.out.print("Seleccione una opción: ");
-
-            try {
-                opcion = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                opcion = 0; // Opción inválida
-            }
-
-            switch (opcion) {
-                case 1:
-                    System.out.print("Matrícula: ");
-                    String mat = scanner.nextLine().toUpperCase();
-                    System.out.print("Nombre Completo: ");
-                    String nom = scanner.nextLine();
-                    System.out.print("Teléfono: ");
-                    String tel = scanner.nextLine();
-                    System.out.print("Correo Electrónico: ");
-                    String cor = scanner.nextLine();
-                    System.out.print("Dirección Postal (Calle, No, Col, Ciudad): ");
-                    String dir = scanner.nextLine();
-                    sistema.registrarEstudiante(mat, nom, tel, cor, dir);
-                    break;
-                case 2:
-                    System.out.print("Ingrese la matrícula a buscar: ");
-                    String busqueda = scanner.nextLine().toUpperCase();
-                    sistema.buscarEstudiante(busqueda);
-                    break;
-                case 3:
-                    sistema.listarEstudiantesOrdenadosPorPromedio();
-                    break;
-                case 4:
-                    System.out.print("Matrícula del estudiante: ");
-                    String matCal = scanner.nextLine().toUpperCase();
-                    System.out.print("Nueva calificación (0.0 a 10.0): ");
-                    try {
-                        double cal = Double.parseDouble(scanner.nextLine());
-                        sistema.agregarCalificacion(matCal, cal);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Calificación inválida.");
-                    }
-                    break;
-                case 5:
-                    sistema.deshacerUltimaAccion();
-                    break;
-                case 7:
-                    System.out.println("Saliendo del sistema...");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Intente de nuevo.");
-            }
-        } while (opcion != 7);
-
-        scanner.close();
-    }
     
-}
+
