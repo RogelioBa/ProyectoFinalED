@@ -3,6 +3,16 @@ package MenuPrincipal;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * MenuPrincipal
+ * -------------
+ * Ventana principal del sistema de gestión de estudiantes.
+ * Contiene la barra de menús y un panel central con CardLayout
+ * para mostrar los diferentes módulos (Estudiantes, Cursos, etc.).
+ *
+ * @author Roberto
+ * @version 2.0
+ */
 public class MenuPrincipal extends JFrame {
 
     private JPanel panelCentral;
@@ -74,37 +84,47 @@ public class MenuPrincipal extends JFrame {
         cardLayout = new CardLayout();
         panelCentral = new JPanel(cardLayout);
 
-        // Paneles vacíos por ahora
+        // Paneles
         panelCentral.add(new JLabel("Bienvenido al sistema"), "Inicio");
+        panelCentral.add(new PanelAgregarEstudiante(), "AgregarEstudiante");
+        panelCentral.add(new PanelBuscarEstudiante(), "BuscarEstudiante");
+        panelCentral.add(new PanelListarPorPromedio(), "ListarPorPromedio");
 
-        // Eventos de submenús (solo muestran mensajes por ahora)
-        itemAgregarEstudiante.addActionListener(e -> mostrarMensaje("Agregar estudiante"));
-        itemBuscarEstudiante.addActionListener(e -> mostrarMensaje("Buscar estudiante por matrícula"));
-        itemListarPorPromedio.addActionListener(e -> mostrarMensaje("Listar estudiantes ordenados por promedio"));
+        panelCentral.add(new PanelAgregarCurso(), "AgregarCurso");
+        panelCentral.add(new PanelEliminarCurso(), "EliminarCurso");
+        panelCentral.add(new PanelListarCursos(), "ListarCursos");
 
-        itemAgregarCurso.addActionListener(e -> mostrarMensaje("Agregar curso"));
-        itemEliminarCurso.addActionListener(e -> mostrarMensaje("Eliminar curso"));
-        itemListarCursos.addActionListener(e -> mostrarMensaje("Listar cursos"));
+        panelCentral.add(new PanelInscribirEstudiante(), "InscribirEstudiante");
+        panelCentral.add(new PanelMostrarInscritos(), "MostrarInscritos");
+        panelCentral.add(new PanelMostrarListaEspera(), "MostrarListaEspera");
 
-        itemInscribirEstudiante.addActionListener(e -> mostrarMensaje("Inscribir estudiante en curso"));
-        itemMostrarInscritos.addActionListener(e -> mostrarMensaje("Mostrar inscritos de un curso"));
-        itemMostrarListaEspera.addActionListener(e -> mostrarMensaje("Mostrar lista de espera"));
+        panelCentral.add(new PanelEnviarSolicitud(), "EnviarSolicitud");
+        panelCentral.add(new PanelProcesarSolicitud(), "ProcesarSolicitud");
 
-        itemEnviarSolicitud.addActionListener(e -> mostrarMensaje("Enviar solicitud de calificación"));
-        itemProcesarSolicitud.addActionListener(e -> mostrarMensaje("Procesar siguiente solicitud"));
+        panelCentral.add(new PanelDeshacerAccion(), "DeshacerAccion");
+        panelCentral.add(new PanelRotarRol(), "RotarRol");
 
-        itemDeshacer.addActionListener(e -> mostrarMensaje("Deshacer última acción"));
+        // Eventos de submenús -> muestran el panel correspondiente
+        itemAgregarEstudiante.addActionListener(e -> cardLayout.show(panelCentral, "AgregarEstudiante"));
+        itemBuscarEstudiante.addActionListener(e -> cardLayout.show(panelCentral, "BuscarEstudiante"));
+        itemListarPorPromedio.addActionListener(e -> cardLayout.show(panelCentral, "ListarPorPromedio"));
 
-        itemRotarRol.addActionListener(e -> mostrarMensaje("Rotar rol de tutor/líder"));
+        itemAgregarCurso.addActionListener(e -> cardLayout.show(panelCentral, "AgregarCurso"));
+        itemEliminarCurso.addActionListener(e -> cardLayout.show(panelCentral, "EliminarCurso"));
+        itemListarCursos.addActionListener(e -> cardLayout.show(panelCentral, "ListarCursos"));
+
+        itemInscribirEstudiante.addActionListener(e -> cardLayout.show(panelCentral, "InscribirEstudiante"));
+        itemMostrarInscritos.addActionListener(e -> cardLayout.show(panelCentral, "MostrarInscritos"));
+        itemMostrarListaEspera.addActionListener(e -> cardLayout.show(panelCentral, "MostrarListaEspera"));
+
+        itemEnviarSolicitud.addActionListener(e -> cardLayout.show(panelCentral, "EnviarSolicitud"));
+        itemProcesarSolicitud.addActionListener(e -> cardLayout.show(panelCentral, "ProcesarSolicitud"));
+
+        itemDeshacer.addActionListener(e -> cardLayout.show(panelCentral, "DeshacerAccion"));
+        itemRotarRol.addActionListener(e -> cardLayout.show(panelCentral, "RotarRol"));
 
         add(panelCentral);
         setVisible(true);
-    }
-
-    // Método auxiliar para mostrar mensajes temporales
-    private void mostrarMensaje(String titulo) {
-        JOptionPane.showMessageDialog(this, "Funcionalidad pendiente: " + titulo);
-        // Aquí se conectará el panel o formulario correspondiente
     }
 
     public static void main(String[] args) {

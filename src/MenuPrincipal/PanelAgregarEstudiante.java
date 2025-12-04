@@ -6,13 +6,11 @@ import java.awt.*;
 /**
  * PanelAgregarEstudiante
  * ----------------------
- * Este panel permite registrar un nuevo estudiante en el sistema.
- * Contiene campos para matrícula, nombre, teléfono, correo y dirección.
- * Al presionar el botón "Registrar", se validan los datos y se envían
- * al módulo de gestión de estudiantes.
+ * Panel para registrar un nuevo estudiante en el sistema.
+ * Incluye validaciones de matrícula, nombre, teléfono, correo y dirección.
  *
  * @author Roberto
- * @version 1.0
+ * @version 2.0
  */
 public class PanelAgregarEstudiante extends JPanel {
 
@@ -21,7 +19,6 @@ public class PanelAgregarEstudiante extends JPanel {
 
     /**
      * Constructor del panel de registro de estudiantes.
-     * Inicializa los componentes gráficos y define la acción del botón.
      */
     public PanelAgregarEstudiante() {
         setLayout(new GridLayout(6, 2, 10, 10));
@@ -57,6 +54,27 @@ public class PanelAgregarEstudiante extends JPanel {
             String telefono = txtTelefono.getText();
             String correo = txtCorreo.getText();
             String direccion = txtDireccion.getText();
+
+            if (!ValidadorEntradas.esMatriculaValida(matricula)) {
+                JOptionPane.showMessageDialog(this, "Matrícula inválida");
+                return;
+            }
+            if (!ValidadorEntradas.esNombreValido(nombre)) {
+                JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío");
+                return;
+            }
+            if (!ValidadorEntradas.esTelefonoValido(telefono)) {
+                JOptionPane.showMessageDialog(this, "Teléfono inválido (solo números)");
+                return;
+            }
+            if (!ValidadorEntradas.esCorreoValido(correo)) {
+                JOptionPane.showMessageDialog(this, "Correo electrónico inválido");
+                return;
+            }
+            if (!ValidadorEntradas.esDireccionValida(direccion)) {
+                JOptionPane.showMessageDialog(this, "Dirección inválida");
+                return;
+            }
 
             // Aquí se conectará con SistemaGestionEstudiantes
             JOptionPane.showMessageDialog(this,

@@ -6,12 +6,11 @@ import java.awt.*;
 /**
  * PanelListarPorPromedio
  * ----------------------
- * Este panel permite listar los estudiantes ordenados por promedio.
- * Utiliza un árbol AVL para mantener el orden ascendente de los promedios.
- * El resultado se muestra en un área de texto.
+ * Panel para listar estudiantes ordenados por promedio.
+ * Valida que existan estudiantes antes de mostrar resultados.
  *
  * @author Roberto
- * @version 1.0
+ * @version 2.0
  */
 public class PanelListarPorPromedio extends JPanel {
 
@@ -20,7 +19,6 @@ public class PanelListarPorPromedio extends JPanel {
 
     /**
      * Constructor del panel de listado por promedio.
-     * Inicializa los componentes gráficos y define la acción del botón.
      */
     public PanelListarPorPromedio() {
         setLayout(new BorderLayout(10, 10));
@@ -32,9 +30,16 @@ public class PanelListarPorPromedio extends JPanel {
         add(btnListar, BorderLayout.NORTH);
         add(new JScrollPane(resultado), BorderLayout.CENTER);
 
-        // Acción del botón
+        // Acción del botón con validación
         btnListar.addActionListener(e -> {
             // Aquí se conectará con el AVL de promedios
+            boolean hayEstudiantes = true; // cambiar por lógica real
+
+            if (!hayEstudiantes) {
+                JOptionPane.showMessageDialog(this, "No hay estudiantes registrados");
+                return;
+            }
+
             resultado.setText("Listado de estudiantes ordenados por promedio:\n[pendiente]");
         });
     }
