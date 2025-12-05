@@ -1,5 +1,8 @@
 package MenuPrincipal;
 
+import Listas.ListaCircularSimple;
+import Estudiante.Estudiante;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,20 +10,27 @@ import java.awt.*;
  * PanelRotarRol
  * -------------
  * Panel para rotar el rol de tutor/líder entre los estudiantes.
- * Valida que existan estudiantes en la lista circular antes de rotar.
+ * Utiliza una lista circular simple para avanzar al siguiente estudiante.
  *
  * @author Roberto
- * @version 2.0
+ * @version 2.1
  */
 public class PanelRotarRol extends JPanel {
 
     private JButton btnRotar;
     private JTextArea resultado;
 
+    // Referencia a la lista circular de estudiantes
+    private ListaCircularSimple listaCircular;
+
     /**
      * Constructor del panel de rotación de roles.
+     *
+     * @param listaCircular Instancia de {@link ListaCircularSimple} que contiene
+     *                      a los estudiantes con rol asignado.
      */
-    public PanelRotarRol() {
+    public PanelRotarRol(ListaCircularSimple listaCircular) {
+        this.listaCircular = listaCircular;
         setLayout(new BorderLayout(10, 10));
 
         btnRotar = new JButton("Rotar rol de tutor/líder");
@@ -32,15 +42,17 @@ public class PanelRotarRol extends JPanel {
 
         // Acción del botón con validación
         btnRotar.addActionListener(e -> {
-            // Aquí se conectará con la lista circular simple
-            boolean hayEstudiantes = true; // cambiar por lógica real
-
-            if (!hayEstudiantes) {
+            if (listaCircular.estaVacia()) {
                 JOptionPane.showMessageDialog(this, "No hay estudiantes para rotar roles");
                 return;
             }
 
-            resultado.setText("Nuevo tutor/líder asignado:\n[pendiente]");
+            // Avanzar al siguiente estudiante
+            listaCircular.rotar();
+            Estudiante tutor = listaCircular.obtenerTutorActual();
+
+            resultado.setText("Nuevo tutor/líder asignado:\n" +
+                    tutor.getMatricula() + " - " + tutor.getNombreCompleto());
         });
     }
 }

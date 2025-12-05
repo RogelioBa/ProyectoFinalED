@@ -1,94 +1,122 @@
 package MenuPrincipal;
 
-import Estudiante.SistemaGestionEstudiantes;
-import GestionCursos.GestionCursos;
-import Solicitudes.SolicitudesDeCalificacion;
-
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * MenuPrincipal
- * -------------
- * Ventana principal con CardLayout para navegar entre los módulos:
- * - Inscribir estudiantes en cursos
- * - Mostrar inscritos
- * - Mostrar lista de espera
- * - Procesar solicitudes de calificación
- *
- * @author Roberto
- * @version 2.1
- */
+
+import Estudiante.SistemaGestionEstudiantes;
+import GestionCursos.GestionCursos;
+import Listas.ListaCircularSimple;
+import Solicitudes.SolicitudesDeCalificacion;
+import Deshacer.PilaAcciones;
+
 public class MenuPrincipal extends JFrame {
 
     private CardLayout cardLayout;
     private JPanel panelContenedor;
 
-    // Referencias a lógica
+    // === DEPENDENCIAS ===
     private SistemaGestionEstudiantes sistema;
     private GestionCursos gestionCursos;
-    private SolicitudesDeCalificacion colaSolicitudes;
+    private ListaCircularSimple listaCircular;
+    private SolicitudesDeCalificacion solicitudesCalificacion;
+    private PilaAcciones pilaAcciones;
 
-    public MenuPrincipal() {
-        setTitle("Sistema de Gestión Académica");
-        setSize(800, 600);
+    public MenuPrincipal(SistemaGestionEstudiantes sistema,
+                         GestionCursos gestionCursos,
+                         ListaCircularSimple listaCircular,
+                         SolicitudesDeCalificacion solicitudesCalificacion,
+                         PilaAcciones pilaAcciones) {
+
+        this.sistema = sistema;
+        this.gestionCursos = gestionCursos;
+        this.listaCircular = listaCircular;
+        this.solicitudesCalificacion = solicitudesCalificacion;
+        this.pilaAcciones = pilaAcciones;
+
+        setTitle("Sistema Académico");
+        setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-        // Inicializar lógica
-        try {
-            sistema = new SistemaGestionEstudiantes();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "Error al inicializar el sistema de estudiantes: " + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        gestionCursos = new GestionCursos();
-        colaSolicitudes = new SolicitudesDeCalificacion();
-
-        // Layout principal
         cardLayout = new CardLayout();
         panelContenedor = new JPanel(cardLayout);
 
-        // Crear paneles
-        PanelInscribirEstudiante panelInscribir = new PanelInscribirEstudiante(sistema, gestionCursos);
-        PanelMostrarInscritos panelInscritos = new PanelMostrarInscritos(gestionCursos);
-        PanelMostrarListaEspera panelListaEspera = new PanelMostrarListaEspera(gestionCursos);
-        PanelProcesarSolicitud panelProcesar = new PanelProcesarSolicitud(sistema, colaSolicitudes);
+        // ====================================
+        //      REGISTRO DE TODOS LOS PANELES
+        // ====================================
 
-        // Agregar paneles al contenedor
-        panelContenedor.add(panelInscribir, "INSCRIBIR");
-        panelContenedor.add(panelInscritos, "INSCRITOS");
-        panelContenedor.add(panelListaEspera, "ESPERA");
-        panelContenedor.add(panelProcesar, "PROCESAR");
+        panelContenedor.add(new PanelAgregarEstudiante(sistema), "AGREGAR_EST");
+        panelContenedor.add(new PanelBuscarEstudiante(sistema), "BUSCAR");
 
-        // Barra de navegación
-        JPanel barraNavegacion = new JPanel(new FlowLayout());
-        JButton btnInscribir = new JButton("Inscribir Estudiante");
-        JButton btnInscritos = new JButton("Mostrar Inscritos");
-        JButton btnEspera = new JButton("Lista de Espera");
-        JButton btnProcesar = new JButton("Procesar Solicitudes");
+        panelContenedor.add(new PanelAgregarCurso(gestionCursos), "AGREGAR_CURSO");
+        panelContenedor.add(new PanelEliminarCurso(gestionCursos), "ELIMINAR_CURSO");
+        panelContenedor.add(new PanelListarCursos(gestionCursos), "LISTAR_CURSOS");
 
-        barraNavegacion.add(btnInscribir);
-        barraNavegacion.add(btnInscritos);
-        barraNavegacion.add(btnEspera);
-        barraNavegacion.add(btnProcesar);
+        panelContenedor.add(new PanelInscribirEstudiante(sistema, gestionCursos), "INSCRIBIR");
+        panelContenedor.add(new PanelMostrarInscritos(gestionCursos), "INSCRITOS");
+        panelContenedor.add(new PanelMostrarListaEspera(gestionCursos), "ESPERA");
 
-        // Acciones de navegación
-        btnInscribir.addActionListener(e -> cardLayout.show(panelContenedor, "INSCRIBIR"));
-        btnInscritos.addActionListener(e -> cardLayout.show(panelContenedor, "INSCRITOS"));
-        btnEspera.addActionListener(e -> cardLayout.show(panelContenedor, "ESPERA"));
-        btnProcesar.addActionListener(e -> cardLayout.show(panelContenedor, "PROCESAR"));
+        // Panel que usa  COLA DE SOLICITUDES
+        panelContenedor.add(new PanelProcesarSolicitud(sistema, solicitudesCalificacion), "PROCESAR");
 
-        // Estructura de la ventana
-        setLayout(new BorderLayout());
-        add(barraNavegacion, BorderLayout.NORTH);
+        // Panel de deshacer con pila 
+        panelContenedor.add(new PanelDeshacerAccion(pilaAcciones), "DESHACER");
+
+        panelContenedor.add(new PanelListarPorPromedio(sistema), "PROMEDIOS");
+        panelContenedor.add(new PanelRotarRol(listaCircular), "ROTAR");
+
+        // ====================================
+        //          MENÚ SUPERIOR
+        // ====================================
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu menuEst = new JMenu("Estudiantes");
+        menuEst.add(crearItem("Registrar Estudiante", "AGREGAR_EST"));
+        menuEst.add(crearItem("Buscar Estudiante", "BUSCAR"));
+
+        JMenu menuCursos = new JMenu("Cursos");
+        menuCursos.add(crearItem("Agregar Curso", "AGREGAR_CURSO"));
+        menuCursos.add(crearItem("Eliminar Curso", "ELIMINAR_CURSO"));
+        menuCursos.add(crearItem("Listar Cursos", "LISTAR_CURSOS"));
+
+        JMenu menuIns = new JMenu("Inscripciones");
+        menuIns.add(crearItem("Inscribir Estudiante", "INSCRIBIR"));
+        menuIns.add(crearItem("Mostrar Inscritos", "INSCRITOS"));
+        menuIns.add(crearItem("Lista de Espera", "ESPERA"));
+
+        JMenu menuCal = new JMenu("Calificaciones");
+        menuCal.add(crearItem("Procesar Solicitudes", "PROCESAR"));
+
+        JMenu menuAcc = new JMenu("Acciones");
+        menuAcc.add(crearItem("Deshacer Acción", "DESHACER"));
+
+        JMenu menuRep = new JMenu("Reportes");
+        menuRep.add(crearItem("Listar por Promedio", "PROMEDIOS"));
+        menuRep.add(crearItem("Rotar Tutor/Líder", "ROTAR"));
+
+        JMenu menuSalir = new JMenu("Salir");
+        JMenuItem miSalir = new JMenuItem("Cerrar");
+        miSalir.addActionListener(e -> System.exit(0));
+        menuSalir.add(miSalir);
+
+        menuBar.add(menuEst);
+        menuBar.add(menuCursos);
+        menuBar.add(menuIns);
+        menuBar.add(menuCal);
+        menuBar.add(menuAcc);
+        menuBar.add(menuRep);
+        menuBar.add(menuSalir);
+
+        setJMenuBar(menuBar);
+
         add(panelContenedor, BorderLayout.CENTER);
-
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MenuPrincipal::new);
+    private JMenuItem crearItem(String texto, String panelClave) {
+        JMenuItem item = new JMenuItem(texto);
+        item.addActionListener(e -> cardLayout.show(panelContenedor, panelClave));
+        return item;
     }
 }

@@ -23,7 +23,7 @@ import java.util.List;
 public class SistemaGestionEstudiantes {
 
     // Estructuras de datos principales
-    private estudiantesABB bstEstudiantes; // BST ordenado por matrícula
+    public estudiantesABB bstEstudiantes; // BST ordenado por matrícula
     private Pila<Accion> pilaAcciones; // Pila para el historial de acciones
 
     public SistemaGestionEstudiantes() throws MatriculaInvalidaException, NombreInvalidoException, telefonoInvalidoException, correoInvalidoException, direccionVaciaException {
@@ -207,5 +207,3 @@ public class SistemaGestionEstudiantes {
         agregarCalificacion("C003", 8.5);
     }
 }
-
-  
