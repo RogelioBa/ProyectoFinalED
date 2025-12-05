@@ -40,16 +40,8 @@ public class SistemaGestionEstudiantes {
      * @param correo Correo electrónico.
      * @param dir Dirección postal.
      */
-    public void registrarEstudiante(String matricula, String nombre, String tel, String correo, String dir) throws MatriculaInvalidaException, NombreInvalidoException, telefonoInvalidoException, correoInvalidoException, direccionVaciaException {
-        if (matricula == null || matricula.trim().isEmpty()) {
-            return;
-        }
-
-        // Validación de datos simple (ej. el teléfono es numérico)
-        if (!tel.matches("^\\d{8,}$")) {
-            return;
-        }
-
+    public void registrarEstudiante(String matricula, String nombre, String tel, String correo, String dir) throws MatriculaInvalidaException, NombreInvalidoException, telefonoInvalidoException, correoInvalidoException, direccionVaciaException, Exception {
+ 
         Estudiante nuevo = new Estudiante(matricula, nombre, tel, correo, dir);
 
         if (bstEstudiantes.insertar(nuevo)) {
@@ -59,6 +51,7 @@ public class SistemaGestionEstudiantes {
                     matricula);
             pilaAcciones.agregarAccion(accion);
         } else {
+            throw new Exception("Error: los datos no son validos, no se pudo reguitrar al estudiant");
         }
     }
 

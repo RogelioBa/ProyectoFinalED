@@ -26,19 +26,19 @@ public class Estudiante {
     private double promedio;
 
     public Estudiante(String matricula, String nombreCompleto, String telefono, String correoElectronico, String direccion) throws MatriculaInvalidaException, NombreInvalidoException, telefonoInvalidoException, correoInvalidoException, direccionVaciaException {
-        if(!matricula.matches("^[a-zA-Z0-9]{4,10}$")){
+        if(!matricula.matches("^[a-zA-Z0-9]{4,10}$")||matricula.trim().isEmpty()){
             throw new MatriculaInvalidaException("La matricula solo puede contener de 4 a 10 caracteres alfanumericos");
         }
-        if (!nombreCompleto.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")){
+        if (!nombreCompleto.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")||nombreCompleto.trim().isEmpty()){
             throw new NombreInvalidoException("Los nombres solo pueden contener letras y espacios");
         }
-        if (!telefono.matches("^\\d{8,}$")){
+        if (!telefono.matches("^\\d{10}|\\d{3} \\d{3} \\d{4}$")||telefono.trim().isEmpty()){
             throw new telefonoInvalidoException("Los numeros de telefono solo pueden contener numeros y espacios");
         }
-        if(!correoElectronico.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")){
+        if(!correoElectronico.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")||correoElectronico.trim().isEmpty()){
             throw new correoInvalidoException("No es una direccion de correo valida");
         }
-        if (direccion == null){
+        if (direccion.trim().isEmpty()){
             throw new direccionVaciaException("La direccion no puede estar en blanco");
         }
         this.matricula = matricula;
