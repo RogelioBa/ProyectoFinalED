@@ -64,8 +64,7 @@ public class MenuPrincipal extends JFrame {
         panelContenedor.add(new PanelDeshacerAccion(pilaAcciones), "DESHACER");
 
         panelContenedor.add(new PanelListarPorPromedio(sistema), "PROMEDIOS");
-        panelContenedor.add(new PanelRotarRol(listaCircular), "ROTAR");
-
+        panelContenedor.add(new PanelRotarRol(listaCircular, sistema), "ROTAR");
         // ====================================
         //          MENÚ SUPERIOR
         // ====================================

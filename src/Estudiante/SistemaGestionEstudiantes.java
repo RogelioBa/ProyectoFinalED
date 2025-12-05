@@ -15,10 +15,7 @@ import Excepciones.telefonoInvalidoException;
 import java.util.EmptyStackException;
 import java.util.List;
 
-/**
- *
- * @author Roger Jr
- */
+
 // --- 6. SISTEMA DE GESTIÓN DE ESTUDIANTES (MAIN) ---
 public class SistemaGestionEstudiantes {
 

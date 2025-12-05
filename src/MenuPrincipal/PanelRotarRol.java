@@ -1,58 +1,89 @@
 package MenuPrincipal;
 
 import Listas.ListaCircularSimple;
+import Estudiante.SistemaGestionEstudiantes;
 import Estudiante.Estudiante;
-
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * PanelRotarRol
- * -------------
- * Panel para rotar el rol de tutor/líder entre los estudiantes.
- * Utiliza una lista circular simple para avanzar al siguiente estudiante.
- *
- * @author Roberto
- * @version 2.1
- */
 public class PanelRotarRol extends JPanel {
 
-    private JButton btnRotar;
+    private JTextField txtMatricula;
+    private JButton btnAgregar, btnRotar;
     private JTextArea resultado;
 
-    // Referencia a la lista circular de estudiantes
+    // Dependencias
     private ListaCircularSimple listaCircular;
+    private SistemaGestionEstudiantes sistema; 
 
-    /**
-     * Constructor del panel de rotación de roles.
-     *
-     * @param listaCircular Instancia de {@link ListaCircularSimple} que contiene
-     *                      a los estudiantes con rol asignado.
-     */
-    public PanelRotarRol(ListaCircularSimple listaCircular) {
+    public PanelRotarRol(ListaCircularSimple listaCircular, SistemaGestionEstudiantes sistema) {
         this.listaCircular = listaCircular;
+        this.sistema = sistema;
+        
         setLayout(new BorderLayout(10, 10));
 
-        btnRotar = new JButton("Rotar rol de tutor/líder");
+        // --- Panel Superior: Agregar a la lista ---
+        JPanel panelControles = new JPanel(new GridLayout(2, 1, 5, 5));
+        
+        // Zona de agregar
+        JPanel panelAgregar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelAgregar.add(new JLabel("Matrícula para agregar rol:"));
+        txtMatricula = new JTextField(10);
+        panelAgregar.add(txtMatricula);
+        btnAgregar = new JButton("Agregar a Roles");
+        panelAgregar.add(btnAgregar);
+        
+        // Zona de rotar
+        btnRotar = new JButton(">>> ROTAR TURNO (Siguiente Líder) >>>");
+        btnRotar.setBackground(new Color(200, 230, 255)); // Color para destacar
+        
+        panelControles.add(panelAgregar);
+        panelControles.add(btnRotar);
+
+        // --- Área de Resultados ---
         resultado = new JTextArea();
         resultado.setEditable(false);
+        resultado.setFont(new Font("SansSerif", Font.BOLD, 14));
+        resultado.setBorder(BorderFactory.createTitledBorder("Líder / Tutor Actual"));
 
-        add(btnRotar, BorderLayout.NORTH);
+        add(panelControles, BorderLayout.NORTH);
         add(new JScrollPane(resultado), BorderLayout.CENTER);
 
-        // Acción del botón con validación
+
+        // 1. Botón Agregar a la lista circular
+        btnAgregar.addActionListener(e -> {
+            String mat = txtMatricula.getText().trim();
+            if(mat.isEmpty()) return;
+
+            // Buscamos en la base de datos general (BST)
+            Estudiante est = sistema.bstEstudiantes.buscar(mat);
+            
+            if (est != null) {
+                listaCircular.agregar(est);
+                JOptionPane.showMessageDialog(this, "Agregado a la rotación: " + est.getNombreCompleto());
+                txtMatricula.setText("");
+                actualizarPantalla(); 
+            } else {
+                JOptionPane.showMessageDialog(this, "Estudiante no encontrado en el sistema.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // 2. Botón Rotar
         btnRotar.addActionListener(e -> {
             if (listaCircular.estaVacia()) {
-                JOptionPane.showMessageDialog(this, "No hay estudiantes para rotar roles");
+                JOptionPane.showMessageDialog(this, "La lista de roles está vacía.\nPrimero agrega estudiantes.", "Lista Vacía", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
-            // Avanzar al siguiente estudiante
-            listaCircular.rotar();
-            Estudiante tutor = listaCircular.obtenerTutorActual();
-
-            resultado.setText("Nuevo tutor/líder asignado:\n" +
-                    tutor.getMatricula() + " - " + tutor.getNombreCompleto());
+            listaCircular.rotar(); 
+            actualizarPantalla();
         });
+    }
+    
+    private void actualizarPantalla() {
+        Estudiante actual = listaCircular.obtenerTutorActual();
+        if (actual != null) {
+            resultado.setText("\n   LÍDER ACTUAL: \n   " + 
+                              actual.getNombreCompleto() + "\n   (" + actual.getMatricula() + ")");
+        }
     }
 }
