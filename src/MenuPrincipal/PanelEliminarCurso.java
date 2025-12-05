@@ -2,6 +2,7 @@ package MenuPrincipal;
 
 import GestionCursos.GestionCursos;
 import Excepciones.CursoNoEncontradoException;
+import GestionCursos.Curso;
 
 import javax.swing.*;
 import java.awt.*;
@@ -72,8 +73,9 @@ public class PanelEliminarCurso extends JPanel {
             }
 
             try {
+                Curso cursoEliminado = gestionCursos.buscarCurso(clave);
                 gestionCursos.eliminarCurso(clave);
-                resultado.setText(" Curso eliminado correctamente: " + clave);
+                resultado.setText(" Curso eliminado correctamente: " + clave + ": " + cursoEliminado.getNombre());
             } catch (CursoNoEncontradoException ex) {
                 resultado.setText(" Error: No se encontró el curso con clave " + clave);
             } catch (Exception ex) {

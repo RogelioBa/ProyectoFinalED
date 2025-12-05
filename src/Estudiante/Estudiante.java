@@ -32,7 +32,7 @@ public class Estudiante {
         if (!nombreCompleto.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")){
             throw new NombreInvalidoException("Los nombres solo pueden contener letras y espacios");
         }
-        if (!telefono.matches("^\\d{10}$")){
+        if (!telefono.matches("^\\d{8,}$")){
             throw new telefonoInvalidoException("Los numeros de telefono solo pueden contener numeros y espacios");
         }
         if(!correoElectronico.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")){
@@ -150,6 +150,15 @@ public class Estudiante {
             return 0;
         }
         return calificaciones.get(indice) + calcularSumaRecursiva(indice + 1);
+    }
+    
+    @Override
+    public String toString(){
+        return "Matricula: " + matricula + "\n" +
+                "Nombre del estudiante: " + nombreCompleto + "\n" +
+                "Telefono: " + telefono + "\n" +
+                "Correo electronico: " + correoElectronico + "\n" + 
+                "Direccion: " + direccion;
     }
 }
 

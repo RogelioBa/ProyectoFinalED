@@ -136,7 +136,6 @@ public class Diccionario<K, V>
         {
             if (!tabla[i].estaVacia()) 
             {
-                System.out.print("Bucket " + i + ": ");
                 tabla[i].imprimir(); 
             }
         }

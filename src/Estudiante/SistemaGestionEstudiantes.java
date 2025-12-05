@@ -50,7 +50,7 @@ public class SistemaGestionEstudiantes {
         }
 
         // Validación de datos simple (ej. el teléfono es numérico)
-        if (!tel.matches("\\d+")) {
+        if (!tel.matches("^\\d{8,}$")) {
             System.out.println("Error: El teléfono debe contener solo dígitos.");
             return;
         }

@@ -107,6 +107,6 @@ public class Curso
     @Override
     public String toString() 
     {
-        return clave + " - " + nombre + " (" + cantidadInscritos + "/" + capacidadMaxima + ")";
+        return "Clave del curso: " + clave + "\n" + " Curso: " + nombre + "\n" + " Inscritos: " + cantidadInscritos + "/" + capacidadMaxima;
     }
 }

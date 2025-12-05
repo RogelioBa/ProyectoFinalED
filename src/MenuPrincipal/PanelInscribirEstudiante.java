@@ -5,6 +5,7 @@ import Estudiante.SistemaGestionEstudiantes;
 import Estudiante.Estudiante;
 import Excepciones.CursoNoEncontradoException;
 import Excepciones.EstudianteYaInscritoException;
+import GestionCursos.Curso;
 
 import javax.swing.*;
 import java.awt.*;
@@ -83,7 +84,8 @@ public class PanelInscribirEstudiante extends JPanel {
                 }
 
                 gestionCursos.inscribirEstudiante(estudiante, claveCurso);
-                resultado.setText(" Estudiante inscrito correctamente en el curso " + claveCurso);
+                Curso cursoInscrito = gestionCursos.buscarCurso(claveCurso);
+                resultado.setText(" Estudiante inscrito correctamente en el curso de " + cursoInscrito.getNombre());
 
             } catch (CursoNoEncontradoException ex) {
                 resultado.setText(" Error: No se encontró el curso con clave " + claveCurso);
