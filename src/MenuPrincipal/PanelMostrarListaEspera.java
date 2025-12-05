@@ -1,16 +1,23 @@
 package MenuPrincipal;
 
+import GestionCursos.GestionCursos;
+import GestionCursos.Curso;
+import Estudiante.Estudiante;
+import Excepciones.CursoNoEncontradoException;
+
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * PanelMostrarListaEspera
  * -----------------------
- * Panel para mostrar la lista de espera de un curso lleno.
- * Valida la clave del curso antes de invocar la lista doble circular.
+ * Panel gráfico para mostrar los estudiantes en lista de espera de un curso.
+ *
+ * Usa la estructura {@link Listas.ListaDobleCircular} para obtener
+ * el listado de estudiantes en espera.
  *
  * @author Roberto
- * @version 2.0
+ * @version 2.1
  */
 public class PanelMostrarListaEspera extends JPanel {
 
@@ -18,12 +25,13 @@ public class PanelMostrarListaEspera extends JPanel {
     private JButton btnMostrar;
     private JTextArea resultado;
 
-    /**
-     * Constructor del panel de lista de espera.
-     */
-    public PanelMostrarListaEspera() {
+    private GestionCursos gestionCursos;
+
+    public PanelMostrarListaEspera(GestionCursos gestionCursos) {
+        this.gestionCursos = gestionCursos;
         setLayout(new BorderLayout(10, 10));
 
+        // Panel superior con campo y botón
         JPanel panelSuperior = new JPanel(new GridLayout(1, 2, 10, 10));
         panelSuperior.add(new JLabel("Clave del curso:"));
         txtClaveCurso = new JTextField();
@@ -32,23 +40,37 @@ public class PanelMostrarListaEspera extends JPanel {
         btnMostrar = new JButton("Mostrar lista de espera");
         panelSuperior.add(btnMostrar);
 
+        // Área de resultados
         resultado = new JTextArea();
         resultado.setEditable(false);
 
         add(panelSuperior, BorderLayout.NORTH);
         add(new JScrollPane(resultado), BorderLayout.CENTER);
 
-        // Acción del botón con validaciones
+        // Acción del botón
         btnMostrar.addActionListener(e -> {
             String claveCurso = txtClaveCurso.getText();
 
-            if (!ValidadorEntradas.esClaveCursoValida(claveCurso)) {
-                JOptionPane.showMessageDialog(this, "Clave de curso inválida");
-                return;
-            }
+            try {
+                Curso curso = gestionCursos.buscarCurso(claveCurso);
 
-            // Aquí se conectará con la lista doble circular de espera
-            resultado.setText("Lista de espera en curso " + claveCurso + ":\n[pendiente]");
+                if (curso == null) {
+                    throw new CursoNoEncontradoException(claveCurso);
+                }
+
+                if (curso.getListaEspera().estaVacia()) {
+                    resultado.setText("No hay estudiantes en lista de espera para este curso.");
+                } else {
+                    // Usamos directamente obtenerListado con el tamaño total
+                    resultado.setText(curso.getListaEspera()
+                                           .obtenerListado(curso.getListaEspera().getTamanio()));
+                }
+
+            } catch (CursoNoEncontradoException ex) {
+                resultado.setText("❌ Error: No se encontró el curso con clave " + claveCurso);
+            } catch (Exception ex) {
+                resultado.setText("⚠ Error inesperado: " + ex.getMessage());
+            }
         });
     }
 }

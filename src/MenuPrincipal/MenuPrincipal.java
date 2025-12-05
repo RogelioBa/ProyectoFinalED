@@ -1,136 +1,94 @@
 package MenuPrincipal;
 
+import Estudiante.SistemaGestionEstudiantes;
 import GestionCursos.GestionCursos;
+import Solicitudes.SolicitudesDeCalificacion;
+
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * MenuPrincipal
  * -------------
- * Ventana principal del sistema de gestión de estudiantes.
- * Contiene la barra de menús y un panel central con CardLayout
- * para mostrar los diferentes módulos (Estudiantes, Cursos, etc.).
+ * Ventana principal con CardLayout para navegar entre los módulos:
+ * - Inscribir estudiantes en cursos
+ * - Mostrar inscritos
+ * - Mostrar lista de espera
+ * - Procesar solicitudes de calificación
  *
  * @author Roberto
- * @version 2.0
+ * @version 2.1
  */
 public class MenuPrincipal extends JFrame {
 
-    private JPanel panelCentral;
     private CardLayout cardLayout;
+    private JPanel panelContenedor;
+
+    // Referencias a lógica
+    private SistemaGestionEstudiantes sistema;
     private GestionCursos gestionCursos;
+    private SolicitudesDeCalificacion colaSolicitudes;
 
     public MenuPrincipal() {
-        setTitle("Sistema de Gestión de Estudiantes - Proyecto Final");
-        setSize(900, 550);
+        setTitle("Sistema de Gestión Académica");
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        
+
+        // Inicializar lógica
+        try {
+            sistema = new SistemaGestionEstudiantes();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al inicializar el sistema de estudiantes: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         gestionCursos = new GestionCursos();
-        // Menú superior
-        JMenuBar menuBar = new JMenuBar();
+        colaSolicitudes = new SolicitudesDeCalificacion();
 
-        // Menú Estudiantes
-        JMenu menuEstudiantes = new JMenu("Estudiantes");
-        JMenuItem itemAgregarEstudiante = new JMenuItem("Agregar estudiante");
-        JMenuItem itemBuscarEstudiante = new JMenuItem("Buscar por matrícula");
-        JMenuItem itemListarPorPromedio = new JMenuItem("Listar ordenados por promedio");
-        menuEstudiantes.add(itemAgregarEstudiante);
-        menuEstudiantes.add(itemBuscarEstudiante);
-        menuEstudiantes.add(itemListarPorPromedio);
-
-        // Menú Cursos
-        JMenu menuCursos = new JMenu("Cursos");
-        JMenuItem itemAgregarCurso = new JMenuItem("Agregar curso");
-        JMenuItem itemEliminarCurso = new JMenuItem("Eliminar curso");
-        JMenuItem itemListarCursos = new JMenuItem("Listar cursos");
-        menuCursos.add(itemAgregarCurso);
-        menuCursos.add(itemEliminarCurso);
-        menuCursos.add(itemListarCursos);
-
-        // Menú Inscripciones
-        JMenu menuInscripciones = new JMenu("Inscripciones");
-        JMenuItem itemInscribirEstudiante = new JMenuItem("Inscribir estudiante en curso");
-        JMenuItem itemMostrarInscritos = new JMenuItem("Mostrar inscritos de un curso");
-        JMenuItem itemMostrarListaEspera = new JMenuItem("Mostrar lista de espera");
-        menuInscripciones.add(itemInscribirEstudiante);
-        menuInscripciones.add(itemMostrarInscritos);
-        menuInscripciones.add(itemMostrarListaEspera);
-
-        // Menú Calificaciones
-        JMenu menuCalificaciones = new JMenu("Calificaciones");
-        JMenuItem itemEnviarSolicitud = new JMenuItem("Enviar solicitud de calificación");
-        JMenuItem itemProcesarSolicitud = new JMenuItem("Procesar siguiente solicitud");
-        menuCalificaciones.add(itemEnviarSolicitud);
-        menuCalificaciones.add(itemProcesarSolicitud);
-
-        // Menú Acciones
-        JMenu menuAcciones = new JMenu("Acciones");
-        JMenuItem itemDeshacer = new JMenuItem("Deshacer última acción");
-        menuAcciones.add(itemDeshacer);
-
-        // Menú Reportes
-        JMenu menuReportes = new JMenu("Reportes");
-        JMenuItem itemRotarRol = new JMenuItem("Rotar rol de tutor/líder");
-        menuReportes.add(itemRotarRol);
-
-        // Agregar todos los menús a la barra
-        menuBar.add(menuEstudiantes);
-        menuBar.add(menuCursos);
-        menuBar.add(menuInscripciones);
-        menuBar.add(menuCalificaciones);
-        menuBar.add(menuAcciones);
-        menuBar.add(menuReportes);
-        setJMenuBar(menuBar);
-
-        // Panel central con CardLayout
+        // Layout principal
         cardLayout = new CardLayout();
-        panelCentral = new JPanel(cardLayout);
+        panelContenedor = new JPanel(cardLayout);
 
-        // Paneles
-        panelCentral.add(new JLabel("Bienvenido al sistema"), "Inicio");
-        panelCentral.add(new PanelAgregarEstudiante(), "AgregarEstudiante");
-        panelCentral.add(new PanelBuscarEstudiante(), "BuscarEstudiante");
-        panelCentral.add(new PanelListarPorPromedio(), "ListarPorPromedio");
+        // Crear paneles
+        PanelInscribirEstudiante panelInscribir = new PanelInscribirEstudiante(sistema, gestionCursos);
+        PanelMostrarInscritos panelInscritos = new PanelMostrarInscritos(gestionCursos);
+        PanelMostrarListaEspera panelListaEspera = new PanelMostrarListaEspera(gestionCursos);
+        PanelProcesarSolicitud panelProcesar = new PanelProcesarSolicitud(sistema, colaSolicitudes);
 
-        panelCentral.add(new PanelAgregarCurso(gestionCursos), "AgregarCurso");
-        panelCentral.add(new PanelEliminarCurso(), "EliminarCurso");
-        panelCentral.add(new PanelListarCursos(), "ListarCursos");
+        // Agregar paneles al contenedor
+        panelContenedor.add(panelInscribir, "INSCRIBIR");
+        panelContenedor.add(panelInscritos, "INSCRITOS");
+        panelContenedor.add(panelListaEspera, "ESPERA");
+        panelContenedor.add(panelProcesar, "PROCESAR");
 
-        panelCentral.add(new PanelInscribirEstudiante(), "InscribirEstudiante");
-        panelCentral.add(new PanelMostrarInscritos(), "MostrarInscritos");
-        panelCentral.add(new PanelMostrarListaEspera(), "MostrarListaEspera");
+        // Barra de navegación
+        JPanel barraNavegacion = new JPanel(new FlowLayout());
+        JButton btnInscribir = new JButton("Inscribir Estudiante");
+        JButton btnInscritos = new JButton("Mostrar Inscritos");
+        JButton btnEspera = new JButton("Lista de Espera");
+        JButton btnProcesar = new JButton("Procesar Solicitudes");
 
-        panelCentral.add(new PanelEnviarSolicitud(), "EnviarSolicitud");
-        panelCentral.add(new PanelProcesarSolicitud(), "ProcesarSolicitud");
+        barraNavegacion.add(btnInscribir);
+        barraNavegacion.add(btnInscritos);
+        barraNavegacion.add(btnEspera);
+        barraNavegacion.add(btnProcesar);
 
-        panelCentral.add(new PanelDeshacerAccion(), "DeshacerAccion");
-        panelCentral.add(new PanelRotarRol(), "RotarRol");
+        // Acciones de navegación
+        btnInscribir.addActionListener(e -> cardLayout.show(panelContenedor, "INSCRIBIR"));
+        btnInscritos.addActionListener(e -> cardLayout.show(panelContenedor, "INSCRITOS"));
+        btnEspera.addActionListener(e -> cardLayout.show(panelContenedor, "ESPERA"));
+        btnProcesar.addActionListener(e -> cardLayout.show(panelContenedor, "PROCESAR"));
 
-        // Eventos de submenús -> muestran el panel correspondiente
-        itemAgregarEstudiante.addActionListener(e -> cardLayout.show(panelCentral, "AgregarEstudiante"));
-        itemBuscarEstudiante.addActionListener(e -> cardLayout.show(panelCentral, "BuscarEstudiante"));
-        itemListarPorPromedio.addActionListener(e -> cardLayout.show(panelCentral, "ListarPorPromedio"));
+        // Estructura de la ventana
+        setLayout(new BorderLayout());
+        add(barraNavegacion, BorderLayout.NORTH);
+        add(panelContenedor, BorderLayout.CENTER);
 
-        itemAgregarCurso.addActionListener(e -> cardLayout.show(panelCentral, "AgregarCurso"));
-        itemEliminarCurso.addActionListener(e -> cardLayout.show(panelCentral, "EliminarCurso"));
-        itemListarCursos.addActionListener(e -> cardLayout.show(panelCentral, "ListarCursos"));
-
-        itemInscribirEstudiante.addActionListener(e -> cardLayout.show(panelCentral, "InscribirEstudiante"));
-        itemMostrarInscritos.addActionListener(e -> cardLayout.show(panelCentral, "MostrarInscritos"));
-        itemMostrarListaEspera.addActionListener(e -> cardLayout.show(panelCentral, "MostrarListaEspera"));
-
-        itemEnviarSolicitud.addActionListener(e -> cardLayout.show(panelCentral, "EnviarSolicitud"));
-        itemProcesarSolicitud.addActionListener(e -> cardLayout.show(panelCentral, "ProcesarSolicitud"));
-
-        itemDeshacer.addActionListener(e -> cardLayout.show(panelCentral, "DeshacerAccion"));
-        itemRotarRol.addActionListener(e -> cardLayout.show(panelCentral, "RotarRol"));
-
-        add(panelCentral);
         setVisible(true);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MenuPrincipal());
+        SwingUtilities.invokeLater(MenuPrincipal::new);
     }
 }

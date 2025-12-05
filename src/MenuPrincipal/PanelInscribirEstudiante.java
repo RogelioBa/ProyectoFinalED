@@ -1,13 +1,29 @@
 package MenuPrincipal;
 
+import GestionCursos.GestionCursos;
+import Estudiante.SistemaGestionEstudiantes;
+import Estudiante.Estudiante;
+import Excepciones.CursoNoEncontradoException;
+import Excepciones.EstudianteYaInscritoException;
+
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * PanelInscribirEstudiante
  * ------------------------
- * Panel para inscribir un estudiante en un curso.
- * Valida matrícula y clave del curso antes de invocar el módulo de gestión.
+ * Panel gráfico para inscribir un estudiante en un curso.
+ *
+ * Este panel contiene:
+ * - Campo de matrícula del estudiante.
+ * - Campo de clave del curso.
+ * - Botón "Inscribir" para ejecutar la acción.
+ * - Área de texto para mostrar resultados.
+ *
+ * Al presionar el botón:
+ * 1. Se busca el estudiante en el BST.
+ * 2. Se llama a {@link GestionCursos#inscribirEstudiante(Estudiante, String)}.
+ * 3. Se muestra si quedó inscrito o en lista de espera.
  *
  * @author Roberto
  * @version 2.0
@@ -16,42 +32,66 @@ public class PanelInscribirEstudiante extends JPanel {
 
     private JTextField txtMatricula, txtClaveCurso;
     private JButton btnInscribir;
+    private JTextArea resultado;
+
+    private SistemaGestionEstudiantes sistema;
+    private GestionCursos gestionCursos;
 
     /**
-     * Constructor del panel de inscripción de estudiantes.
+     * Constructor del panel de inscripción.
+     *
+     * @param sistema Instancia de {@link SistemaGestionEstudiantes}.
+     * @param gestionCursos Instancia de {@link GestionCursos}.
      */
-    public PanelInscribirEstudiante() {
-        setLayout(new GridLayout(3, 2, 10, 10));
+    public PanelInscribirEstudiante(SistemaGestionEstudiantes sistema, GestionCursos gestionCursos) {
+        this.sistema = sistema;
+        this.gestionCursos = gestionCursos;
+        setLayout(new BorderLayout(10, 10));
 
-        add(new JLabel("Matrícula del estudiante:"));
+        // Panel superior con campos
+        JPanel panelSuperior = new JPanel(new GridLayout(3, 2, 10, 10));
+        panelSuperior.add(new JLabel("Matrícula del estudiante:"));
         txtMatricula = new JTextField();
-        add(txtMatricula);
+        panelSuperior.add(txtMatricula);
 
-        add(new JLabel("Clave del curso:"));
+        panelSuperior.add(new JLabel("Clave del curso:"));
         txtClaveCurso = new JTextField();
-        add(txtClaveCurso);
+        panelSuperior.add(txtClaveCurso);
 
-        btnInscribir = new JButton("Inscribir estudiante");
-        add(new JLabel()); // espacio vacío
-        add(btnInscribir);
+        btnInscribir = new JButton("Inscribir");
+        panelSuperior.add(new JLabel()); // espacio vacío
+        panelSuperior.add(btnInscribir);
 
-        // Acción del botón con validaciones
+        // Área de resultados
+        resultado = new JTextArea();
+        resultado.setEditable(false);
+
+        add(panelSuperior, BorderLayout.NORTH);
+        add(new JScrollPane(resultado), BorderLayout.CENTER);
+
+        // Acción del botón
         btnInscribir.addActionListener(e -> {
             String matricula = txtMatricula.getText();
             String claveCurso = txtClaveCurso.getText();
 
-            if (!ValidadorEntradas.esMatriculaValida(matricula)) {
-                JOptionPane.showMessageDialog(this, "Matrícula inválida");
-                return;
-            }
-            if (!ValidadorEntradas.esClaveCursoValida(claveCurso)) {
-                JOptionPane.showMessageDialog(this, "Clave de curso inválida");
-                return;
-            }
+            try {
+                Estudiante estudiante = sistema.bstEstudiantes.buscar(matricula);
 
-            // Aquí se conectará con GestionCursos
-            JOptionPane.showMessageDialog(this,
-                "Estudiante " + matricula + " inscrito en curso " + claveCurso);
+                if (estudiante == null) {
+                    resultado.setText(" Error: Estudiante con matrícula " + matricula + " no encontrado.");
+                    return;
+                }
+
+                gestionCursos.inscribirEstudiante(estudiante, claveCurso);
+                resultado.setText(" Estudiante inscrito correctamente en el curso " + claveCurso);
+
+            } catch (CursoNoEncontradoException ex) {
+                resultado.setText(" Error: No se encontró el curso con clave " + claveCurso);
+            } catch (EstudianteYaInscritoException ex) {
+                resultado.setText(" El estudiante ya está inscrito en el curso.");
+            } catch (Exception ex) {
+                resultado.setText(" Error inesperado: " + ex.getMessage());
+            }
         });
     }
 }

@@ -1,57 +1,89 @@
 package MenuPrincipal;
 
+import Solicitudes.SolicitudCalificacion;
+import Solicitudes.SolicitudesDeCalificacion;
+
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * PanelEnviarSolicitud
  * --------------------
- * Panel para enviar una solicitud de calificación.
- * Valida que la matrícula del estudiante y la solicitud sean correctas.
+ * Panel gráfico para enviar solicitudes de calificación.
+ *
+ * Este panel contiene:
+ * - Un campo de texto para ingresar la matrícula del estudiante.
+ * - Un campo de texto para ingresar la calificación.
+ * - Un botón "Enviar solicitud" para encolar la petición.
+ *
+ * Al presionar el botón, se crea un objeto
+ * {@link SolicitudCalificacion} y se agrega a la cola
+ * {@link SolicitudesDeCalificacion}.
+ *
+ * El resultado se muestra en un área de texto confirmando que la
+ * solicitud fue encolada correctamente.
  *
  * @author Roberto
  * @version 2.0
  */
 public class PanelEnviarSolicitud extends JPanel {
 
-    private JTextField txtMatricula, txtSolicitud;
+    // Campos de entrada
+    private JTextField txtMatricula, txtCalificacion;
     private JButton btnEnviar;
+    private JTextArea resultado;
+
+    // Referencia a la cola de solicitudes
+    private SolicitudesDeCalificacion<SolicitudCalificacion> colaSolicitudes;
 
     /**
-     * Constructor del panel de envío de solicitudes de calificación.
+     * Constructor del panel de envío de solicitudes.
+     *
+     * @param colaSolicitudes Instancia de {@link SolicitudesDeCalificacion}
+     *                        que almacena las solicitudes de calificación.
      */
-    public PanelEnviarSolicitud() {
-        setLayout(new GridLayout(3, 2, 10, 10));
+    public PanelEnviarSolicitud(SolicitudesDeCalificacion<SolicitudCalificacion> colaSolicitudes) {
+        this.colaSolicitudes = colaSolicitudes;
+        setLayout(new BorderLayout(10, 10));
 
-        add(new JLabel("Matrícula del estudiante:"));
+        // Panel superior con campos y botón
+        JPanel panelSuperior = new JPanel(new GridLayout(3, 2, 10, 10));
+        panelSuperior.add(new JLabel("Matrícula:"));
         txtMatricula = new JTextField();
-        add(txtMatricula);
+        panelSuperior.add(txtMatricula);
 
-        add(new JLabel("Solicitud de calificación:"));
-        txtSolicitud = new JTextField();
-        add(txtSolicitud);
+        panelSuperior.add(new JLabel("Calificación:"));
+        txtCalificacion = new JTextField();
+        panelSuperior.add(txtCalificacion);
 
         btnEnviar = new JButton("Enviar solicitud");
-        add(new JLabel()); // espacio vacío
-        add(btnEnviar);
+        panelSuperior.add(new JLabel()); // espacio vacío
+        panelSuperior.add(btnEnviar);
 
-        // Acción del botón con validaciones
+        // Área de resultados
+        resultado = new JTextArea();
+        resultado.setEditable(false);
+
+        add(panelSuperior, BorderLayout.NORTH);
+        add(new JScrollPane(resultado), BorderLayout.CENTER);
+
+        // Acción del botón con integración a la lógica
         btnEnviar.addActionListener(e -> {
-            String matricula = txtMatricula.getText();
-            String solicitud = txtSolicitud.getText();
+            try {
+                String matricula = txtMatricula.getText();
+                float calificacion = Float.parseFloat(txtCalificacion.getText());
 
-            if (!ValidadorEntradas.esMatriculaValida(matricula)) {
-                JOptionPane.showMessageDialog(this, "Matrícula inválida");
-                return;
-            }
-            if (!ValidadorEntradas.esSolicitudValida(solicitud)) {
-                JOptionPane.showMessageDialog(this, "La solicitud no puede estar vacía");
-                return;
-            }
+                SolicitudCalificacion solicitud = new SolicitudCalificacion(matricula, calificacion);
+                colaSolicitudes.encolar(solicitud);
 
-            // Aquí se conectará con ProcesadorCalificaciones
-            JOptionPane.showMessageDialog(this,
-                "Solicitud enviada para estudiante " + matricula + ": " + solicitud);
+                resultado.setText(" Solicitud encolada correctamente:\n" +
+                        "Matrícula: " + matricula + "\n" +
+                        "Calificación: " + calificacion);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, " Error: La calificación debe ser un número válido");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, " Error inesperado: " + ex.getMessage());
+            }
         });
     }
 }
