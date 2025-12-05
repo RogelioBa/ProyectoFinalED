@@ -58,8 +58,8 @@ public class MenuPrincipal extends JFrame {
         panelContenedor.add(new PanelMostrarListaEspera(gestionCursos), "ESPERA");
 
         // Panel que usa  COLA DE SOLICITUDES
+        panelContenedor.add(new PanelEnviarSolicitud(solicitudesCalificacion), "ENVIAR_SOLICITUD");            
         panelContenedor.add(new PanelProcesarSolicitud(sistema, solicitudesCalificacion), "PROCESAR");
-
         // Panel de deshacer con pila 
         panelContenedor.add(new PanelDeshacerAccion(pilaAcciones), "DESHACER");
 
@@ -86,7 +86,9 @@ public class MenuPrincipal extends JFrame {
         menuIns.add(crearItem("Lista de Espera", "ESPERA"));
 
         JMenu menuCal = new JMenu("Calificaciones");
+        menuCal.add(crearItem("Enviar Solicitudes", "ENVIAR_SOLICITUD"));
         menuCal.add(crearItem("Procesar Solicitudes", "PROCESAR"));
+        
 
         JMenu menuAcc = new JMenu("Acciones");
         menuAcc.add(crearItem("Deshacer Acción", "DESHACER"));

@@ -25,8 +25,8 @@ import java.awt.*;
  * @author Roberto
  * @version 2.0
  */
-public class PanelAgregarCurso extends JPanel {
-
+public class PanelAgregarCurso extends JPanel 
+{
     // Campos de entrada
     private JTextField txtClave, txtNombre, txtCapacidad;
     private JButton btnAgregar;
@@ -40,7 +40,8 @@ public class PanelAgregarCurso extends JPanel {
      * @param gestionCursos Instancia de {@link GestionCursos} que gestiona
      *                      la lógica de inserción y validación de cursos.
      */
-    public PanelAgregarCurso(GestionCursos gestionCursos) {
+    public PanelAgregarCurso(GestionCursos gestionCursos) 
+    {
         this.gestionCursos = gestionCursos;
         setLayout(new GridLayout(4, 2, 10, 10));
 
@@ -64,21 +65,29 @@ public class PanelAgregarCurso extends JPanel {
 
         // Acción del botón con integración a la lógica
         btnAgregar.addActionListener(e -> {
-            try {
+            try 
+            {
                 String clave = txtClave.getText();
                 String nombre = txtNombre.getText();
                 int capacidad = Integer.parseInt(txtCapacidad.getText());
 
                 boolean agregado = gestionCursos.agregarCurso(clave, nombre, capacidad);
 
-                if (agregado) {
+                if (agregado) 
+                {
                     JOptionPane.showMessageDialog(this, " Curso agregado correctamente");
-                } else {
+                } 
+                else 
+                {
                     JOptionPane.showMessageDialog(this, " Error: Ya existe un curso con esa clave");
                 }
-            } catch (NumberFormatException ex) {
+            } 
+            catch (NumberFormatException ex) 
+            {
                 JOptionPane.showMessageDialog(this, " Error: La capacidad debe ser un número entero");
-            } catch (Exception ex) {
+            } 
+            catch (Exception ex) 
+            {
                 JOptionPane.showMessageDialog(this, " Error inesperado: " + ex.getMessage());
             }
         });

@@ -5,7 +5,6 @@ import Estudiante.SistemaGestionEstudiantes;
 import Estudiante.Estudiante;
 import Excepciones.CursoNoEncontradoException;
 import Excepciones.EstudianteYaInscritoException;
-import GestionCursos.Curso;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +28,8 @@ import java.awt.*;
  * @author Roberto
  * @version 2.0
  */
-public class PanelInscribirEstudiante extends JPanel {
+public class PanelInscribirEstudiante extends JPanel 
+{
 
     private JTextField txtMatricula, txtClaveCurso;
     private JButton btnInscribir;
@@ -38,13 +38,8 @@ public class PanelInscribirEstudiante extends JPanel {
     private SistemaGestionEstudiantes sistema;
     private GestionCursos gestionCursos;
 
-    /**
-     * Constructor del panel de inscripción.
-     *
-     * @param sistema Instancia de {@link SistemaGestionEstudiantes}.
-     * @param gestionCursos Instancia de {@link GestionCursos}.
-     */
-    public PanelInscribirEstudiante(SistemaGestionEstudiantes sistema, GestionCursos gestionCursos) {
+    public PanelInscribirEstudiante(SistemaGestionEstudiantes sistema, GestionCursos gestionCursos) 
+    {
         this.sistema = sistema;
         this.gestionCursos = gestionCursos;
         setLayout(new BorderLayout(10, 10));
@@ -66,33 +61,50 @@ public class PanelInscribirEstudiante extends JPanel {
         // Área de resultados
         resultado = new JTextArea();
         resultado.setEditable(false);
+        resultado.setFont(new Font("Monospaced", Font.PLAIN, 12)); // Fuente más legible
 
         add(panelSuperior, BorderLayout.NORTH);
         add(new JScrollPane(resultado), BorderLayout.CENTER);
 
         // Acción del botón
-        btnInscribir.addActionListener(e -> {
-            String matricula = txtMatricula.getText();
-            String claveCurso = txtClaveCurso.getText();
+        btnInscribir.addActionListener(e -> 
+        {
+            String matricula = txtMatricula.getText().trim();
+            String claveCurso = txtClaveCurso.getText().trim();
 
-            try {
+            // Validación visual básica
+            if(matricula.isEmpty() || claveCurso.isEmpty())
+            {
+                resultado.setText("⚠️ Por favor llene todos los campos.");
+                return;
+            }
+
+            try 
+            {
                 Estudiante estudiante = sistema.bstEstudiantes.buscar(matricula);
 
-                if (estudiante == null) {
-                    resultado.setText(" Error: Estudiante con matrícula " + matricula + " no encontrado.");
+                if (estudiante == null) 
+                {
+                    resultado.setText("Error: Estudiante con matrícula " + matricula + " no encontrado.");
                     return;
                 }
+                
+                String mensajeResultado = gestionCursos.inscribirEstudiante(estudiante, claveCurso);
+                
+                resultado.setText(mensajeResultado);
 
-                gestionCursos.inscribirEstudiante(estudiante, claveCurso);
-                Curso cursoInscrito = gestionCursos.buscarCurso(claveCurso);
-                resultado.setText(" Estudiante inscrito correctamente en el curso de " + cursoInscrito.getNombre());
-
-            } catch (CursoNoEncontradoException ex) {
-                resultado.setText(" Error: No se encontró el curso con clave " + claveCurso);
-            } catch (EstudianteYaInscritoException ex) {
-                resultado.setText(" El estudiante ya está inscrito en el curso.");
-            } catch (Exception ex) {
-                resultado.setText(" Error inesperado: " + ex.getMessage());
+            } 
+            catch (CursoNoEncontradoException ex) 
+            {
+                resultado.setText("Error: No se encontró el curso con clave " + claveCurso);
+            } 
+            catch (EstudianteYaInscritoException ex) 
+            {
+                resultado.setText("Aviso: " + ex.getMessage());
+            } 
+            catch (Exception ex) 
+            {
+                resultado.setText("Error inesperado: " + ex.getMessage());
             }
         });
     }

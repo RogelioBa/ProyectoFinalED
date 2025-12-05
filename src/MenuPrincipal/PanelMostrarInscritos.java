@@ -19,7 +19,8 @@ import java.awt.*;
  * @author Roberto
  * @version 2.1
  */
-public class PanelMostrarInscritos extends JPanel {
+public class PanelMostrarInscritos extends JPanel 
+{
 
     private JTextField txtClaveCurso;
     private JButton btnMostrar;
@@ -27,7 +28,8 @@ public class PanelMostrarInscritos extends JPanel {
 
     private GestionCursos gestionCursos;
 
-    public PanelMostrarInscritos(GestionCursos gestionCursos) {
+    public PanelMostrarInscritos(GestionCursos gestionCursos) 
+    {
         this.gestionCursos = gestionCursos;
         setLayout(new BorderLayout(10, 10));
 
@@ -51,19 +53,25 @@ public class PanelMostrarInscritos extends JPanel {
         btnMostrar.addActionListener(e -> {
             String claveCurso = txtClaveCurso.getText();
 
-            try {
+            try 
+            {
                 Curso curso = gestionCursos.buscarCurso(claveCurso);
 
-                if (curso == null) {
+                if (curso == null) 
+                {
                     throw new CursoNoEncontradoException(claveCurso);
                 }
 
-                if (curso.getInscritos().estaVacia()) {
+                if (curso.getInscritos().estaVacia()) 
+                {
                     resultado.setText("No hay estudiantes inscritos en este curso.");
-                } else {
+                } 
+                else 
+                {
                     StringBuilder sb = new StringBuilder();
                     sb.append("--- INSCRITOS EN ").append(curso.getNombre()).append(" ---\n");
-                    for (int i = 0; i < curso.getInscritos().getTamanio(); i++) {
+                    for (int i = 0; i < curso.getInscritos().getTamanio(); i++) 
+                    {
                         Estudiante est = curso.getInscritos().get(i);
                         sb.append(est.getMatricula())
                           .append(" - ")
@@ -73,9 +81,13 @@ public class PanelMostrarInscritos extends JPanel {
                     resultado.setText(sb.toString());
                 }
 
-            } catch (CursoNoEncontradoException ex) {
+            } 
+            catch (CursoNoEncontradoException ex) 
+            {
                 resultado.setText(" Error: No se encontró el curso con clave " + claveCurso);
-            } catch (Exception ex) {
+            } 
+            catch (Exception ex) 
+            {
                 resultado.setText(" Error inesperado: " + ex.getMessage());
             }
         });

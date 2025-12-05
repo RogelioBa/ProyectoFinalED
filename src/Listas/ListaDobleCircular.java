@@ -160,4 +160,26 @@ public class ListaDobleCircular<T>
     {
         return tamanio;
     }
+    
+    /**
+     * Busca un elemento en la lista circular.
+     * @return El dato si lo encuentra, null si no.
+     */
+    public T buscar(T dato) 
+    {
+        if (estaVacia()) return null;
+        
+        Nodo actual = inicio;
+        do 
+        {
+            if (actual.dato.equals(dato)) 
+            {
+                return actual.dato;
+            }
+            actual = actual.siguiente;
+        } 
+        while (actual != inicio);
+        
+        return null;
+    }
 }

@@ -30,7 +30,7 @@ public class SistemaGestionEstudiantes {
         this.bstEstudiantes = new estudiantesABB();
         this.pilaAcciones = new Pila<>();
         // Inicializar con algunos datos de ejemplo
-        inicializarDatos();
+        
     }
 
     // --- LÓGICA DE GESTIÓN (Funcionalidades solicitadas) ---
@@ -45,13 +45,11 @@ public class SistemaGestionEstudiantes {
      */
     public void registrarEstudiante(String matricula, String nombre, String tel, String correo, String dir) throws MatriculaInvalidaException, NombreInvalidoException, telefonoInvalidoException, correoInvalidoException, direccionVaciaException {
         if (matricula == null || matricula.trim().isEmpty()) {
-            System.out.println("Error: La matrícula no puede estar vacía.");
             return;
         }
 
         // Validación de datos simple (ej. el teléfono es numérico)
         if (!tel.matches("^\\d{8,}$")) {
-            System.out.println("Error: El teléfono debe contener solo dígitos.");
             return;
         }
 
@@ -63,9 +61,7 @@ public class SistemaGestionEstudiantes {
                     "Registro de " + nombre,
                     matricula);
             pilaAcciones.agregarAccion(accion);
-            System.out.println("¡Estudiante registrado con éxito y acción registrada para Deshacer!");
         } else {
-            System.out.println("Error: Ya existe un estudiante con la matrícula " + matricula + ".");
         }
     }
 
@@ -190,20 +186,20 @@ public class SistemaGestionEstudiantes {
     /**
      * Inicializa algunos datos para la demostración.
      */
-    private void inicializarDatos() throws MatriculaInvalidaException, NombreInvalidoException, telefonoInvalidoException, correoInvalidoException, direccionVaciaException {
-        registrarEstudiante("A001", "Ana Pérez", "1234567890", "ana@tec.mx", "Calle A #10");
-        // No registrar la acción para la precarga, simular una acción ya ejecutada
-        pilaAcciones.DesaserAccion();
-        registrarEstudiante("C003", "Carlos Gómez", "9876543210", "carlos@tec.mx", "Calle C #30");
-        pilaAcciones.DesaserAccion();
-        registrarEstudiante("B002", "Beto Ramírez", "5551234567", "beto@tec.mx", "Calle B #20");
-        pilaAcciones.DesaserAccion();
-
-        // Agregar calificaciones (con registro de acción)
-        agregarCalificacion("A001", 9.5);
-        agregarCalificacion("A001", 8.0);
-        agregarCalificacion("B002", 7.0);
-        agregarCalificacion("C003", 10.0);
-        agregarCalificacion("C003", 8.5);
-    }
+//    private void inicializarDatos() throws MatriculaInvalidaException, NombreInvalidoException, telefonoInvalidoException, correoInvalidoException, direccionVaciaException {
+//        registrarEstudiante("A001", "Ana Pérez", "1234567890", "ana@tec.mx", "Calle A #10");
+//        // No registrar la acción para la precarga, simular una acción ya ejecutada
+//        pilaAcciones.DesaserAccion();
+//        registrarEstudiante("C003", "Carlos Gómez", "9876543210", "carlos@tec.mx", "Calle C #30");
+//        pilaAcciones.DesaserAccion();
+//        registrarEstudiante("B002", "Beto Ramírez", "5551234567", "beto@tec.mx", "Calle B #20");
+//        pilaAcciones.DesaserAccion();
+//
+//        // Agregar calificaciones (con registro de acción)
+//        agregarCalificacion("A001", 9.5);
+//        agregarCalificacion("A001", 8.0);
+//        agregarCalificacion("B002", 7.0);
+//        agregarCalificacion("C003", 10.0);
+//        agregarCalificacion("C003", 8.5);
+//    }
 }

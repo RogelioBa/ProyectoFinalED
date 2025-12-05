@@ -70,6 +70,12 @@ public class Curso
         {
             return true;
         }
+        
+        if (listaEspera.buscar(estudiante) != null) 
+        {
+            return true; 
+        }
+        
         return false; 
     }
 

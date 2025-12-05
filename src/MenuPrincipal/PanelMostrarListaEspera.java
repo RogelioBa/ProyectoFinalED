@@ -19,7 +19,8 @@ import java.awt.*;
  * @author Roberto
  * @version 2.1
  */
-public class PanelMostrarListaEspera extends JPanel {
+public class PanelMostrarListaEspera extends JPanel 
+{
 
     private JTextField txtClaveCurso;
     private JButton btnMostrar;
@@ -48,28 +49,21 @@ public class PanelMostrarListaEspera extends JPanel {
         add(new JScrollPane(resultado), BorderLayout.CENTER);
 
         // Acción del botón
-        btnMostrar.addActionListener(e -> {
+        btnMostrar.addActionListener(e -> 
+        {
             String claveCurso = txtClaveCurso.getText();
-
-            try {
-                Curso curso = gestionCursos.buscarCurso(claveCurso);
-
-                if (curso == null) {
-                    throw new CursoNoEncontradoException(claveCurso);
-                }
-
-                if (curso.getListaEspera().estaVacia()) {
-                    resultado.setText("No hay estudiantes en lista de espera para este curso.");
-                } else {
-                    // Usamos directamente obtenerListado con el tamaño total
-                    resultado.setText(curso.getListaEspera()
-                                           .obtenerListado(curso.getListaEspera().getTamanio()));
-                }
-
-            } catch (CursoNoEncontradoException ex) {
-                resultado.setText("❌ Error: No se encontró el curso con clave " + claveCurso);
-            } catch (Exception ex) {
-                resultado.setText("⚠ Error inesperado: " + ex.getMessage());
+            try 
+            {
+                String listado = gestionCursos.obtenerListaEspera(claveCurso);
+                resultado.setText(listado);
+            } 
+            catch (CursoNoEncontradoException ex) 
+            {
+                resultado.setText("Error: " + ex.getMessage());
+            } 
+            catch (Exception ex) 
+            {
+                resultado.setText("Error inesperado: " + ex.getMessage());
             }
         });
     }

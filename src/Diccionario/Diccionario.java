@@ -67,7 +67,6 @@ public class Diccionario<K, V>
      */
     private int hash(K clave) 
     {
-        // Math.abs es para evitar números negativos
         return Math.abs(clave.hashCode()) % capacidad;
     }
 
